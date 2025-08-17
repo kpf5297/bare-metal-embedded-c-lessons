@@ -22,7 +22,46 @@
   #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
 #endif
 
+// Base address for peripherals - AHB1
 #define PERIPH_BASE (0x4000000UL)
+
+#define AHB1PERIPH_OFFSET (0x20000UL)
+
+// Offset for bank A of GPIO - AHB1
+#define GPIOB_OFFSET (0x20000UL)
+#define GPIOB_BASE_ADDRESS (PERIPH_BASE + GPIOA_OFFSET)
+
+// Two bit mode register (01: General purpose output mode)
+#define GPIOB_MODER_OFFSET (0x14)
+#define GPIOB_MODER_ADDRESS (GPIOB_BASE_ADDRESS + GPIOB_MODER_OFFSET)
+
+
+// Output data register offset
+#define GPIOB_ODR_OFFSET (0x14)
+
+
+// Offset for RCC peripheral - AHB1
+#define RCC_OFFSET (0x23800UL)
+#define RCC_BASE_ADDRESS (PERIPH_BASE + RCC_OFFSET)
+
+
+// Reset and Clock COntrol Enable Register
+#define RCC_AHB1ENR_OFFSET (0x30UL)
+// Offset for GPIOA in enable register
+#define AHB1ENR_GPIOB_OFFSET (0x1UL)
+#define RCC_AHB1ENR_ADDRESS (RCC_BASE_ADDRESS + RCC_AHB1ENR_OFFSET + AHB1ENR_GPIOB_OFFSET)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 int main(void)
