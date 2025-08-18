@@ -28,8 +28,8 @@
 #define AHB1PERIPH_OFFSET (0x20000UL)
 
 // Offset for bank A of GPIO - AHB1
-#define GPIOB_OFFSET (0x20000UL)
-#define GPIOB_BASE_ADDRESS (PERIPH_BASE + GPIOA_OFFSET)
+#define GPIOB_OFFSET (0x400UL)
+#define GPIOB_BASE_ADDRESS (PERIPH_BASE + AHB1PERIPH_OFFSET + GPIOB_OFFSET)
 
 // Two bit mode register (01: General purpose output mode)
 #define GPIOB_MODER_OFFSET (0x14)
