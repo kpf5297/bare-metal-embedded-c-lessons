@@ -14,58 +14,80 @@
  * If no LICENSE file comes with this software, it is provided AS-IS.
  *
  ******************************************************************************
+ * Goal is to implement GPIO pin configuration and control LL for pin B7
+ * connected to a Blue LED. Completed 22AUG2025.
  */
 
 #include <stdint.h>
 
 #if !defined(__SOFT_FP__) && defined(__ARM_FP)
-  #warning "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
+#warning                                                                       \
+    "FPU is not initialized, but the project is compiling for an FPU. Please initialize the FPU before use."
 #endif
 
-// Base address for peripherals - AHB1
-#define PERIPH_BASE (0x4000000UL)
+/******************************************************************************
+ * Peripheral Base Address
+ *******************************************************************************
+ */
+
+// Base address for peripherals and AHB1
+#define PERIPH_BASE (0x40000000UL)
 
 #define AHB1PERIPH_OFFSET (0x20000UL)
+#define AHB1PERIPH_BASE (PERIPH_BASE + AHB1PERIPH_OFFSET)
 
-// Offset for bank A of GPIO - AHB1
+/******************************************************************************
+ * GPIOB Peripheral Access
+ *******************************************************************************
+ */
+
+// Offset for bank B of GPIO - AHB1
 #define GPIOB_OFFSET (0x400UL)
-#define GPIOB_BASE_ADDRESS (PERIPH_BASE + AHB1PERIPH_OFFSET + GPIOB_OFFSET)
+#define GPIOB_BASE (AHB1PERIPH_BASE + GPIOB_OFFSET)
 
-// Two bit mode register (01: General purpose output mode)
-#define GPIOB_MODER_OFFSET (0x14)
-#define GPIOB_MODER_ADDRESS (GPIOB_BASE_ADDRESS + GPIOB_MODER_OFFSET)
+// Mode register
+#define GPIO_MODER_OFFSET (0x00)
+#define GPIOB_MODE_R (*((volatile uint32_t *)(GPIOB_BASE + GPIO_MODER_OFFSET)))
 
+// Output data register
+// ODR[15:0]: Port output data I/O pin y (y = 15 to 0)
+#define OD_R_OFFSET (0x14UL)
+#define GPIOB_OD_R (*((volatile uint32_t *)(GPIOB_BASE + OD_R_OFFSET)))
 
-// Output data register offset
-#define GPIOB_ODR_OFFSET (0x14)
+#define PIN_B7 (0x1U << 7)
+#define BLUE_LED PIN_B7
 
+/******************************************************************************
+ * Reset and Clock Control Register
+ *******************************************************************************
+ */
 
 // Offset for RCC peripheral - AHB1
 #define RCC_OFFSET (0x23800UL)
-#define RCC_BASE_ADDRESS (PERIPH_BASE + RCC_OFFSET)
+#define RCC_BASE (PERIPH_BASE + RCC_OFFSET)
 
+// Reset and Clock Control Enable Register
+#define RCC_AHB1EN_R_OFFSET (0x30UL)
+#define RCC_AHB1EN_R                                                          \
+  (*((volatile uint32_t *)(RCC_BASE + RCC_AHB1EN_R_OFFSET)))
 
-// Reset and Clock COntrol Enable Register
-#define RCC_AHB1ENR_OFFSET (0x30UL)
-// Offset for GPIOA in enable register
-#define AHB1ENR_GPIOB_OFFSET (0x1UL)
-#define RCC_AHB1ENR_ADDRESS (RCC_BASE_ADDRESS + RCC_AHB1ENR_OFFSET + AHB1ENR_GPIOB_OFFSET)
+// Bitmask for enabling clock for GPIOB
+#define GPIOB_EN (0x1U << 1)
 
+int main(void) {
+  /* Enable clock for GPIOB */
+  RCC_AHB1EN_R |= GPIOB_EN;
 
+  /* Set mode for pin B7 to output */
+  GPIOB_MODE_R |= (1U<<14); // Set bit 14 to 1
+  GPIOB_MODE_R &= ~(1U<<15); // Clear bit 15
 
+  while (1) {
+    /* Toggle the blue LED connected to pin B7 */
+    GPIOB_OD_R |= BLUE_LED;
 
-
-
-
-
-
-
-
-
-
-
-int main(void)
-{
-    /* Loop forever */
-	for(;;);
+    /* Simple delay */
+    for (volatile int i = 0; i < 100000; i++)
+      ;
+  }
 }
