@@ -1,13 +1,13 @@
 # Lessons Learned: Bare-Metal Embedded C
 
-This file contains structured notes and takeaways from working through  
+This file contains structured notes (AI-read from whiteboard) and takeaways from working through  
 *Bare Metal Embedded C Programming: Develop High-Performance Embedded Systems with C for ARM microcontrollers*.
 
 ## RUNNING NOTES
 
 ### 1. Overview
 
-The journey of a `.c` file through the GNU toolchain into an executable for ARM Cortex-M.
+The journey of a `.c` file through the GNU toolchain into an executable for ARM Cortex-M. 
 
 ### 2. Key Notes
 
